@@ -7,7 +7,7 @@ IP_NW = "192.168.5."
 NODE_IP_START = 20
 VAGRANT_BOX = "ubuntu/focal64"
 VM_USER = 'vagrant'
-NODE_NAME = 'plutus-node3'
+NODE_NAME = 'plutus-node'
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
