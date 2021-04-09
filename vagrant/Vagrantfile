@@ -1,0 +1,90 @@
+# -*- mode: ruby -*-
+# vi:set ft=ruby sw=2 ts=2 sts=2:
+
+NUM_NODE = 1
+
+IP_NW = "192.168.5."
+NODE_IP_START = 20
+VAGRANT_BOX = "ubuntu/focal64"
+VM_USER = 'vagrant'
+NODE_NAME = 'plutus-node3'
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://vagrantcloud.com/search.
+  # config.vm.box = "base"
+  config.vm.box = VAGRANT_BOX
+
+  # Disable automatic box update checking. If you disable this, then
+  # boxes will only be checked for updates when the user runs
+  # `vagrant box outdated`. This is not recommended.
+  config.vm.box_check_update = false
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  # config.vm.network "public_network"
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  # config.vm.synced_folder "../plutus_files", "/home/" + VM_USER + "/plutus"
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # Example for VirtualBox:
+  #
+  # config.vm.provider "virtualbox" do |vb|
+  #   # Customize the amount of memory on the VM:
+  #   vb.memory = "1024"
+  # end
+  #
+  # View the documentation for the provider you are using for more
+  # information on available options.
+
+  # Provision Master Nodes
+  (1..NUM_NODE).each do |i|
+      config.vm.define "#{NODE_NAME}-#{i}" do |node|
+        # Name shown in the GUI
+        node.vm.provider "virtualbox" do |vb|
+            vb.name = "#{NODE_NAME}-#{i}"
+            vb.memory = 4096
+            vb.cpus = 4
+        end
+        node.vm.hostname = "#{NODE_NAME}-#{i}"
+        node.vm.network :private_network, ip: IP_NW + "#{NODE_IP_START + i}"
+        node.vm.network "forwarded_port", guest: 22, host: "#{2710 + i}"
+        node.vm.network "forwarded_port", guest: 8009, host: 8009
+
+        node.vm.provision "setup-hosts", :type => "shell", :path => "ubuntu/vagrant/setup-hosts.sh" do |s|
+          s.args = ["enp0s8"]
+        end
+
+        config.vm.provision "shell", inline: <<-SHELL
+          apt-get update
+          apt-get install -y git
+          apt-get update
+          apt-get upgrade -y
+          apt-get autoremove -y
+        SHELL
+
+        node.vm.provision "setup-dns", type: "shell", :path => "ubuntu/update-dns.sh"
+        #node.vm.provision "install-docker", type: "shell", :path => "ubuntu/install-docker-2.sh"
+        #node.vm.provision "allow-bridge-nf-traffic", :type => "shell", :path => "ubuntu/allow-bridge-nf-traffic.sh"
+        node.vm.provision "install-nix", type: "shell", :path => "ubuntu/install-nix.sh", privileged: false
+        #node.vm.provision "setup-etc-nix", type: "shell", :path => "ubuntu/iohk-etc.sh"
+        node.vm.provision "prepare-plutus", type: "shell", :path => "ubuntu/prepare-plutus-2.sh", privileged: false do |s|
+          s.args = [VM_USER]
+        end
+      end
+  end
+end
