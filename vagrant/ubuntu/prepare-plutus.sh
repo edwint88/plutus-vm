@@ -1,7 +1,8 @@
 mkdir -p /home/$1/plutus/git
 cd /home/$1/plutus/git
 git clone https://github.com/input-output-hk/plutus
-git clone https://github.com/input-output-hk/plutus-starter
+git clone https://github.com/input-output-hk/plutus-starter.git
+git clone https://github.com/input-output-hk/plutus-pioneer-program.git
 cd ./plutus
 nix build -f default.nix plutus.haskell.packages.plutus-core.components.library
 nix-build -A plutus-playground.client
