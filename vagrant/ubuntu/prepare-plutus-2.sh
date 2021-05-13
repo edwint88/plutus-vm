@@ -4,6 +4,11 @@ substituters        = https://hydra.iohk.io https://iohk.cachix.org https://cach
 trusted-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
 EOF
 mkdir -p /home/$1/plutus/git
+# Prepare VIM
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+vim +'PlugInstall --sync' +qa
+
 cd /home/$1/plutus/git
 git clone https://github.com/input-output-hk/plutus
 git clone https://github.com/input-output-hk/plutus-starter.git

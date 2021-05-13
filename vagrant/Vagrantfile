@@ -77,6 +77,9 @@ Vagrant.configure("2") do |config|
           apt-get autoremove -y
         SHELL
 
+        config.vm.provision "file", source => "vim/vimrc", destination: ".vimrc"
+        config.vm.provision "file", source => "vim/coc-settings.json", destination: ".vim/coc-settings.json"
+        
         node.vm.provision "setup-dns", type: "shell", :path => "ubuntu/update-dns.sh"
         #node.vm.provision "install-docker", type: "shell", :path => "ubuntu/install-docker-2.sh"
         #node.vm.provision "allow-bridge-nf-traffic", :type => "shell", :path => "ubuntu/allow-bridge-nf-traffic.sh"

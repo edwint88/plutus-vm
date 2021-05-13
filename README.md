@@ -15,3 +15,4 @@ Vagrant + VBox for plutus playground
 Go to `cd /home/vagrant/plutus/git/plutus` => run `git pull` => run update `/bin/bash ../updatePlutus.sh`
 ## Tips & Tricks
 1. If you need ghc or cabal you can enter a folder with `default.nix` and run `nix-shell` over there and then change to your directory where you need to run cabal. E.g. `cd /home/vagrant/plutus/git/plutus` => `nix-shell` => `cd ../plutus-pioneer-program/code/week1` => `cabal build`
+2. If you want to use auto-complete function, then enter `nix-shell` as above and then run `vim`. (This doesn't work with `vscode`). You could open a Terminal window in `vscode` and run `vim` from there.
