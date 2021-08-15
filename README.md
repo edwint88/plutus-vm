@@ -39,7 +39,7 @@ vagrant ssh
 cd /home/vagrant/plutus/git/plutus
 nix-shell
 cd plutus-playground-client
-plutus-playground-server
+plutus-playground-server -i 120s
 ```
 
 * In Terminal Window 2:
